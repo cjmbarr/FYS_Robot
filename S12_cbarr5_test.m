@@ -1,16 +1,8 @@
 clc; close all;
 
 [usRangeData] = USTargetScan(frontScanServo,frontUSsensor);
-
-angle = [-90:1:91];
-minValues = [false, (usRangeData(2:end-1)) < usRangeData(1:end-2) & usRangeData(2:end-1)<usRangeData(3:end)];
-ObjectDistance = usRangeData(minValues);
-ObjectAngle = angle(minValues(182:end));
-t = [ObjectAngle;ObjectDistance]';
-table = array2table(t,'VariableNames',{'Angle', 'Distance'});
-disp(table);
-
-
+minAngle = findMin(usRangeData);
+%drive towards object function
 
 
 
@@ -63,5 +55,24 @@ function [usRangeData] = USTargetScan(frontScanServo,frontUSsensor)
     pax.ThetaLim = [-90,90];
     pax.RLim = [0,0.6];
     fprintf('polar plot done\n');
+    end
+end
+
+function minAngle = findMin(usRangeData)
+    angle = [-90:1:91];
+    minValues = [false, (usRangeData(2:end-1)) < usRangeData(1:end-2) & usRangeData(2:end-1)<usRangeData(3:end)];
+    ObjectDistance = usRangeData(minValues);
+    ObjectAngle = angle(minValues(182:end));
+    t = [ObjectAngle;ObjectDistance]';
+    table = array2table(t,'VariableNames',{'Angle', 'Distance'});
+    disp(table);
+    USmean = mean(usRangeData);
+    [minDist, minIndex] = min(ObjectDistance,[],2);
+    if minDist >= (USmean-0.1)
+        %turn 90 function here
+        [usRangeData] = USTargetScan(frontScanServo,frontUSsensor);
+        findMin(usRangeData);
+    else
+    minAngle = ObjectAngle(minIndex);
     end
 end
