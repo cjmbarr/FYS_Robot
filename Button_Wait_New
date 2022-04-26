@@ -1,0 +1,39 @@
+
+function ButtonWait(Tadashi,b_Pin,l_Pin,d_time,tonePin)
+%a: robot name
+%b_Pin: button pin
+%1_Pin: led pin
+%d_time: time to leave light on
+%Print status in comm window
+fprintf('\nPress that thang to find out');
+buttonSt=0;
+    while buttonSt==0
+    buttonSt=readDigitalPin(Tadashi, b_Pin);
+% LED Lights up based of buttonSt
+    writeDigitalPin(Tadashi, l_Pin, 1); % ON
+    pause(d_time);
+    writeDigitalPin(Tadashi, l_Pin, 0); % OFF
+    pause(d_time)
+    end
+    fprintf("\n...Did we do it?");
+    pause(3);
+    if buttonSt == 0
+        playTone(Tadashi, tonePin, 69, 2);
+    else
+        LoZ(Tadashi,tonePin);
+    end
+
+end
+
+
+
+function LoZ(Tadashi,tonePin)
+    playTone(Tadashi,tonePin,440,0.1);
+    pause(0.3);
+    playTone(Tadashi,tonePin,466.16,0.1);
+    pause(0.3);
+    playTone(Tadashi,tonePin,493.88,0.1);
+    pause(0.3);
+    playtone(Tadashi,tonePin,523.25,0.5);
+
+end
